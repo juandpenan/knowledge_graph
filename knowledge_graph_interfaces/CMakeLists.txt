@@ -15,12 +15,15 @@ set(msg_files
     msg/Edge.msg
     msg/Node.msg
   )
-# set(srv_files
-#   srv/Hypothesis.srv
-# )
+set(srv_files
+  srv/AddEdge.srv
+  srv/AddNode.srv
+  srv/GetNodes.srv
+  srv/GetEdges.srv
+)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-    ${msg_files} #${srv_files}
+    ${msg_files} ${srv_files}
     DEPENDENCIES geometry_msgs
 )
 
