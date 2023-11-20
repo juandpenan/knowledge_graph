@@ -1,0 +1,5 @@
+string source_node_id
+string destination_node_id
+---
+Edge[] edges
+bool success
