@@ -1,0 +1,3 @@
+ament_add_gtest(knowledge_graph_test knowledge_graph_test.cpp)
+ament_target_dependencies(knowledge_graph_test ${dependencies})
+target_link_libraries(knowledge_graph_test ${PROJECT_NAME})

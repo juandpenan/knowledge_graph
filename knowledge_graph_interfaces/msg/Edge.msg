@@ -1,0 +1,4 @@
+string source_node_id
+string destination_node_id
+
+Content content
