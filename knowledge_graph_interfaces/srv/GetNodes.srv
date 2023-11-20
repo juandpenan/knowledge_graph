@@ -1,0 +1,4 @@
+string[] nodes_id
+---
+Node[] nodes
+bool success
