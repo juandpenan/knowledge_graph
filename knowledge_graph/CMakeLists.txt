@@ -13,6 +13,7 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(rclcpp_components REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -24,14 +25,18 @@ set(dependencies
     tf2_geometry_msgs
     lifecycle_msgs   
     rclcpp_lifecycle
+    rclcpp_components
 )
 include_directories(include)
 
 add_library(${PROJECT_NAME} SHARED
-  # src/knowledge_graph/knowledge_graph_server.cpp
-  src/knowledge_graph.cpp
+  src/knowledge_graph_server/knowledge_graph_server.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})
+
+rclcpp_components_register_nodes(${PROJECT_NAME}
+    PLUGIN "node_handler::ExampleNode"
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
