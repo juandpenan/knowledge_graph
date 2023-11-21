@@ -1,6 +1,8 @@
 #ifndef KNOWLEDGE_GRAPH__KNOWLEDGE_GRAPH_SERVER_HPP_
 #define KNOWLEDGE_GRAPH__KNOWLEDGE_GRAPH_SERVER_HPP_
 
+#include <string>
+
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "lifecycle_msgs/msg/state.hpp"
@@ -16,7 +18,10 @@ namespace knowledge_graph
 class KnowledgeGraphServer : public rclcpp_lifecycle::LifecycleNode
 {
 public:
-    explicit KnowledgeGraphServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+    explicit KnowledgeGraphServer(
+        // const std::string & node_name,
+        const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+    virtual ~KnowledgeGraphServer();
 
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
     on_configure(const rclcpp_lifecycle::State & state) override;

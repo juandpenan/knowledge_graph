@@ -7,8 +7,10 @@ using namespace std::placeholders;
 
 namespace knowledge_graph
 {
-KnowledgeGraphServer::KnowledgeGraphServer(const rclcpp::NodeOptions & options)
-: rclcpp_lifecycle::LifecycleNode("knowledge_graph_server", options)
+KnowledgeGraphServer::KnowledgeGraphServer(
+  // const std::string & node_name,
+  const rclcpp::NodeOptions & options)
+: rclcpp_lifecycle::LifecycleNode("node_name","", rclcpp::NodeOptions(), true)
 {
     // declare parameters
     RCLCPP_INFO(get_logger(), "KnowledgeGraphServer constructed");
