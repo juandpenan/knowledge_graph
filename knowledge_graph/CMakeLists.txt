@@ -34,9 +34,30 @@ add_library(${PROJECT_NAME} SHARED
 )
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})
 
+add_executable(graph_server src/knowledge_graph_server/main.cpp)
+ament_target_dependencies(graph_server ${dependencies})
+target_link_libraries(graph_server ${PROJECT_NAME})
+
 rclcpp_components_register_nodes(${PROJECT_NAME}
     PLUGIN "node_handler::ExampleNode"
 )
+
+install(TARGETS
+  ${PROJECT_NAME}
+  graph_server
+
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY include/
+  DESTINATION include
+)
+
+ament_export_include_directories(include)
+ament_export_dependencies(${dependencies})
+ament_export_libraries(${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
