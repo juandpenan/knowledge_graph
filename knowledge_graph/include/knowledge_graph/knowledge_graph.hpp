@@ -33,8 +33,21 @@ enum class ContentType
 };
 
 template<class T>
-knowledge_graph_interfaces::msg::Content AddContent(const T & content, const bool static_tf)
+knowledge_graph_interfaces::msg::Content AddContent(const T & content)
 {
+  // remove unused parameter warning
+  static_cast<void>(content);
+  knowledge_graph_interfaces::msg::Content ret;
+  ret.type = knowledge_graph_interfaces::msg::Content::ERROR;
+
+  return ret;
+}
+template<class T>
+knowledge_graph_interfaces::msg::Content AddContent(const T & content, const bool tf_static)
+{
+  // remove unused parameter warning
+  static_cast<void>(tf_static);
+  static_cast<void>(content);
   knowledge_graph_interfaces::msg::Content ret;
   ret.type = knowledge_graph_interfaces::msg::Content::ERROR;
 
@@ -43,7 +56,7 @@ knowledge_graph_interfaces::msg::Content AddContent(const T & content, const boo
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<bool>(const bool & content, const bool static_tf)
+AddContent<bool>(const bool & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.bool_value = content;
@@ -54,7 +67,7 @@ AddContent<bool>(const bool & content, const bool static_tf)
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<int>(const int & content, const bool static_tf)
+AddContent<int>(const int & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.int_value = content;
@@ -65,7 +78,7 @@ AddContent<int>(const int & content, const bool static_tf)
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<float>(const float & content, const bool static_tf)
+AddContent<float>(const float & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.float_value = content;
@@ -76,7 +89,7 @@ AddContent<float>(const float & content, const bool static_tf)
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<double>(const double & content, const bool static_tf)
+AddContent<double>(const double & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.double_value = content;
@@ -87,7 +100,7 @@ AddContent<double>(const double & content, const bool static_tf)
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<std::string>(const std::string & content, const bool static_tf)
+AddContent<std::string>(const std::string & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.string_value = content;
@@ -98,7 +111,7 @@ AddContent<std::string>(const std::string & content, const bool static_tf)
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<std::vector<bool>>(const std::vector<bool> & content, const bool static_tf)
+AddContent<std::vector<bool>>(const std::vector<bool> & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.bool_vector = content;
@@ -109,7 +122,7 @@ AddContent<std::vector<bool>>(const std::vector<bool> & content, const bool stat
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<std::vector<int>>(const std::vector<int> & content, const bool static_tf)
+AddContent<std::vector<int>>(const std::vector<int> & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.int_vector = content;
@@ -120,7 +133,7 @@ AddContent<std::vector<int>>(const std::vector<int> & content, const bool static
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<std::vector<float>>(const std::vector<float> & content, const bool static_tf)
+AddContent<std::vector<float>>(const std::vector<float> & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.float_vector = content;
@@ -131,7 +144,7 @@ AddContent<std::vector<float>>(const std::vector<float> & content, const bool st
 
 template<>
 knowledge_graph_interfaces::msg::Content
-AddContent<std::vector<double>>(const std::vector<double> & content, const bool static_tf)
+AddContent<std::vector<double>>(const std::vector<double> & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.double_vector = content;
@@ -143,7 +156,7 @@ AddContent<std::vector<double>>(const std::vector<double> & content, const bool 
 template<>
 knowledge_graph_interfaces::msg::Content
 AddContent<std::vector<std::string>>(
-  const std::vector<std::string> & content, const bool static_tf)
+  const std::vector<std::string> & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.string_vector = content;
@@ -155,7 +168,7 @@ AddContent<std::vector<std::string>>(
 template<>
 knowledge_graph_interfaces::msg::Content
 AddContent<geometry_msgs::msg::PoseStamped>(
-  const geometry_msgs::msg::PoseStamped & content, const bool static_tf)
+  const geometry_msgs::msg::PoseStamped & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.pose_value = content;
@@ -184,7 +197,7 @@ AddContent<geometry_msgs::msg::TransformStamped>(
 template<>
 knowledge_graph_interfaces::msg::Content
 AddContent<std::vector<geometry_msgs::msg::PoseStamped>>(
-  const std::vector<geometry_msgs::msg::PoseStamped> & content, const bool static_tf)
+  const std::vector<geometry_msgs::msg::PoseStamped> & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.pose_vector = content;
@@ -196,7 +209,7 @@ AddContent<std::vector<geometry_msgs::msg::PoseStamped>>(
 template<>
 knowledge_graph_interfaces::msg::Content
 AddContent<std::vector<geometry_msgs::msg::TransformStamped>>(
-  const std::vector<geometry_msgs::msg::TransformStamped> & content, const bool static_tf)
+  const std::vector<geometry_msgs::msg::TransformStamped> & content)
 {
   knowledge_graph_interfaces::msg::Content ret;
   ret.tf_vector = content;
@@ -459,6 +472,43 @@ bool RemoveEdges(
   }
 }
 
+bool RemoveEdges(
+  const std::string & node_id, knowledge_graph_interfaces::msg::Graph & graph)
+{
+  try {
+    graph.edges.erase(
+      std::remove_if(
+        graph.edges.begin(), graph.edges.end(),
+        [&](const knowledge_graph_interfaces::msg::Edge & current_edge) {
+          return current_edge.source_node_id == node_id ||
+          current_edge.destination_node_id == node_id;
+        }), graph.edges.end());
+    return true;
+  } catch (const std::exception & e) {
+    std::cerr << "Error removing edge: " << e.what() << std::endl;
+    return false;
+  }
+}
+
+bool RemoveEdges(
+  const knowledge_graph_interfaces::msg::Node & node,
+  knowledge_graph_interfaces::msg::Graph & graph)
+{
+  try {
+    graph.edges.erase(
+      std::remove_if(
+        graph.edges.begin(), graph.edges.end(),
+        [&](const knowledge_graph_interfaces::msg::Edge & current_edge) {
+          return current_edge.source_node_id == node.id ||
+          current_edge.destination_node_id == node.id;
+        }), graph.edges.end());
+    return true;
+  } catch (const std::exception & e) {
+    std::cerr << "Error removing edge: " << e.what() << std::endl;
+    return false;
+  }
+}
+
 bool AddNode(
   const knowledge_graph_interfaces::msg::Node & node,
   knowledge_graph_interfaces::msg::Graph & graph)
@@ -508,18 +558,22 @@ bool AddNode(
 bool RemoveNode(const std::string & node_id, knowledge_graph_interfaces::msg::Graph & graph)
 {
   try {
-    graph.nodes.erase(
-      std::remove_if(
-        graph.nodes.begin(), graph.nodes.end(),
-        [&](const knowledge_graph_interfaces::msg::Node & current_node) {
-          return current_node.id == node_id;
-        }), graph.nodes.end());
+
+    for (auto node = graph.nodes.begin(); node != graph.nodes.end(); ++node) {
+      if (node->id == node_id) {
+        graph.nodes.erase(node);
+        RemoveEdges(node->id, graph);
+        break;
+      }
+    }
     return true;
+
   } catch (const std::exception & e) {
     std::cerr << "Error removing node: " << e.what() << std::endl;
     return false;
   }
 }
+
 
 // // bool UpdateGraph
 // // bool AppendGraph

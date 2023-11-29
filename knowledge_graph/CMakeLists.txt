@@ -23,7 +23,7 @@ set(dependencies
     knowledge_graph_interfaces
     tf2
     tf2_geometry_msgs
-    lifecycle_msgs   
+    lifecycle_msgs
     rclcpp_lifecycle
     rclcpp_components
 )
@@ -39,7 +39,7 @@ ament_target_dependencies(graph_server ${dependencies})
 target_link_libraries(graph_server ${PROJECT_NAME})
 
 rclcpp_components_register_nodes(${PROJECT_NAME}
-    PLUGIN "node_handler::ExampleNode"
+    PLUGIN "knowledge_graph::KnowledgeGraphServer"
 )
 
 install(TARGETS
@@ -55,9 +55,9 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-ament_export_include_directories(include)
-ament_export_dependencies(${dependencies})
-ament_export_libraries(${PROJECT_NAME})
+# ament_export_include_directories(include)
+# ament_export_dependencies(${dependencies})
+# ament_export_libraries(${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

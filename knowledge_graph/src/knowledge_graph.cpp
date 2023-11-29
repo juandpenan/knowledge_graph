@@ -1,12 +1,12 @@
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-#include <algorithm>
+// #include <iostream>
+// #include <stdexcept>
+// #include <vector>
+// #include <algorithm>
 
-#include "knowledge_graph/knowledge_graph.hpp"
+// #include "knowledge_graph/knowledge_graph.hpp"
 
-namespace knowledge_graph
-{
+// namespace knowledge_graph
+// {
 
 // bool AddEdge(const knowledge_graph_interfaces::msg::Edge & edge, knowledge_graph_interfaces::msg::Graph graph)
 // {
@@ -312,4 +312,4 @@ namespace knowledge_graph
 // bool AddEdge(const std::string & source, const std::string & destination, const T content,  knowledge_graph_interfaces::msg::Graph graph)
 // {}
 
-} // namespace knowledge_graph
+// } // namespace knowledge_graph
