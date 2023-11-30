@@ -198,17 +198,25 @@ void KnowledgeGraphServer::AddEdgeCallback(
     return;
   }
   RCLCPP_INFO(get_logger(), "Handling AddEdge request");
-  response->success = AddEdge(request->edge, graph_);
+  if (AddEdge(request->edge, graph_)) {
+    response->success = true;
+    graph_pub_->publish(graph_);
+    RCLCPP_INFO(get_logger(), "Edge added successfully");
+  } else {
+    response->success = false;
+  }
+
   if (request->edge.content.type == knowledge_graph_interfaces::msg::Content::STATICTF &&
     !request->edge.content.tf_value.header.frame_id.empty())
   {
+    RCLCPP_INFO(get_logger(), "Publishing static transform");
     tf_static_broadcaster_->sendTransform(request->edge.content.tf_value);
   } else if (request->edge.content.type == knowledge_graph_interfaces::msg::Content::TF &&
     !request->edge.content.tf_value.header.frame_id.empty())
   {
+    RCLCPP_INFO(get_logger(), "Publishing transform");
     tf_broadcaster_->sendTransform(request->edge.content.tf_value);
   }
-  graph_pub_->publish(graph_);
 }
 
 

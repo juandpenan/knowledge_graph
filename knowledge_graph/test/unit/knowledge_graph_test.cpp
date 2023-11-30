@@ -18,8 +18,17 @@ protected:
 // Tests for AddEdge functions
 TEST_F(GraphOperationsTest, AddEdgeTest) {
   knowledge_graph_interfaces::msg::Edge edge;
+  knowledge_graph_interfaces::msg::Node s_node;
+  knowledge_graph_interfaces::msg::Node d_node;
+
+  s_node.id = "source";
+  d_node.id = "destination";
+
   edge.source_node_id = "source";
   edge.destination_node_id = "destination";
+
+  graph.nodes.push_back(s_node);
+  graph.nodes.push_back(d_node);
 
   // Test AddEdge with Edge parameter
   EXPECT_TRUE(knowledge_graph::AddEdge(edge, graph));

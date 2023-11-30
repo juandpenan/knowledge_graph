@@ -379,11 +379,40 @@ std::optional<std::vector<geometry_msgs::msg::TransformStamped>> GetContent(
 
 bool AddEdge(
   const knowledge_graph_interfaces::msg::Edge & edge,
-  knowledge_graph_interfaces::msg::Graph graph)
+  knowledge_graph_interfaces::msg::Graph & graph)
 {
+  bool is_source_node_in_graph = false;
+  bool is_destination_node_in_graph = false;
   try {
-    graph.edges.push_back(edge);
-    return true;
+    for (const auto & node : graph.nodes) {
+      if (node.id == edge.source_node_id) {
+        is_source_node_in_graph = true;
+      } else if (node.id == edge.destination_node_id) {
+        is_destination_node_in_graph = true;
+      }
+    }
+    if (is_source_node_in_graph && is_destination_node_in_graph) {
+      graph.edges.push_back(edge);
+      std::cout << "Edge added successfully" << std::endl;
+      return true;
+    } else if (!is_source_node_in_graph && !is_destination_node_in_graph) {
+      // auto source_node = knowledge_graph_interfaces::msg::Node();
+      // auto destination_node = knowledge_graph_interfaces::msg::Node();
+
+      // source_node.id = edge.source_node_id;
+      // destination_node.id = edge.destination_node_id;
+
+      // graph.nodes.push_back(source_node);
+      // graph.nodes.push_back(destination_node);
+      // graph.edges.push_back(edge);
+      std::cerr << "Error adding edge: both nodes are missing" << std::endl;
+      return false;
+    } else {
+      std::cerr << "Error adding edge: one node is missing" << std::endl;
+      return false;
+    }
+
+
   } catch (const std::exception & e) {
     std::cerr << "Error adding edge: " << e.what() << std::endl;
     return false;
@@ -393,17 +422,36 @@ bool AddEdge(
 template<class T>
 bool AddEdge(
   const std::string & source_node, const std::string & destination_node,
-  const T & content, knowledge_graph_interfaces::msg::Graph graph)
+  const T & content, knowledge_graph_interfaces::msg::Graph & graph)
 {
   knowledge_graph_interfaces::msg::Edge edge;
 
   edge.source_node_id = source_node;
   edge.destination_node_id = destination_node;
 
+  bool is_source_node_in_graph = false;
+  bool is_destination_node_in_graph = false;
+
   try {
-    edge.content = AddContent<T>(content, false);
-    graph.edges.push_back(edge);
-    return true;
+    for (const auto & node : graph.nodes) {
+      if (node.id == edge.source_node_id) {
+        is_source_node_in_graph = true;
+      } else if (node.id == edge.destination_node_id) {
+        is_destination_node_in_graph = true;
+      }
+    }
+    if (is_source_node_in_graph && is_destination_node_in_graph) {
+      edge.content = AddContent<T>(content, false);
+      graph.edges.push_back(edge);
+      return true;
+    } else if (!is_source_node_in_graph && !is_destination_node_in_graph) {
+      std::cerr << "Error adding edge: both nodes are missing" << std::endl;
+      return false;
+    } else {
+      std::cerr << "Error adding edge: one node is missing" << std::endl;
+      return false;
+    }
+
   } catch (const std::exception & e) {
     std::cerr << "Error adding edge: " << e.what() << std::endl;
     return false;
@@ -421,9 +469,27 @@ bool AddEdge(
   edge.destination_node_id = destination_node;
   edge.content = content;
 
+  bool is_source_node_in_graph = false;
+  bool is_destination_node_in_graph = false;
+
   try {
-    graph.edges.push_back(edge);
-    return true;
+    for (const auto & node : graph.nodes) {
+      if (node.id == edge.source_node_id) {
+        is_source_node_in_graph = true;
+      } else if (node.id == edge.destination_node_id) {
+        is_destination_node_in_graph = true;
+      }
+    }
+    if (is_source_node_in_graph && is_destination_node_in_graph) {
+      graph.edges.push_back(edge);
+      return true;
+    } else if (!is_source_node_in_graph && !is_destination_node_in_graph) {
+      std::cerr << "Error adding edge: both nodes are missing" << std::endl;
+      return false;
+    } else {
+      std::cerr << "Error adding edge: one node is missing" << std::endl;
+      return false;
+    }
   } catch (const std::exception & e) {
     std::cerr << "Error adding edge: " << e.what() << std::endl;
     return false;
