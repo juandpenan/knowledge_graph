@@ -14,9 +14,8 @@ find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclcpp_components REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(plansys2_pddl_parser REQUIRED)
 
 set(dependencies
     rclcpp
@@ -26,17 +25,40 @@ set(dependencies
     lifecycle_msgs
     rclcpp_lifecycle
     rclcpp_components
+    pluginlib
+    plansys2_pddl_parser
 )
 include_directories(include)
 
+# plugins
+add_library(pddl_graph SHARED
+  plugins/pddl_parser.cpp
+)
+target_include_directories(pddl_graph PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+ament_target_dependencies(pddl_graph
+  ${dependencies}
+)
+target_link_libraries(pddl_graph ${PROJECT_NAME})
+
+pluginlib_export_plugin_description_file(knowledge_graph plugins.xml)
+
 add_library(${PROJECT_NAME} SHARED
   src/knowledge_graph_server/knowledge_graph_server.cpp
+  src/knowledge_graph_class.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})
 
 add_executable(graph_server src/knowledge_graph_server/main.cpp)
 ament_target_dependencies(graph_server ${dependencies})
 target_link_libraries(graph_server ${PROJECT_NAME})
+
+add_executable(graph_plugin src/plugin_loader.cpp)
+ament_target_dependencies(graph_plugin ${dependencies})
+target_link_libraries(graph_plugin pddl_graph ${PROJECT_NAME})
+
 
 rclcpp_components_register_nodes(${PROJECT_NAME}
     PLUGIN "knowledge_graph::KnowledgeGraphServer"
@@ -45,6 +67,8 @@ rclcpp_components_register_nodes(${PROJECT_NAME}
 install(TARGETS
   ${PROJECT_NAME}
   graph_server
+  graph_plugin
+  pddl_graph
 
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -55,9 +79,19 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-# ament_export_include_directories(include)
-# ament_export_dependencies(${dependencies})
-# ament_export_libraries(${PROJECT_NAME})
+install(FILES plugins.xml
+  DESTINATION share/${PROJECT_NAME}
+)
+
+install(DIRECTORY plugins/
+  DESTINATION share/${PROJECT_NAME}/plugins/
+)
+
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME}
+  pddl_graph
+)
+ament_export_dependencies(${dependencies})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

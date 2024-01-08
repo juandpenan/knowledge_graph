@@ -16,6 +16,8 @@
 #include "knowledge_graph_interfaces/srv/add_node.hpp"
 #include "knowledge_graph_interfaces/srv/get_edges.hpp"
 #include "knowledge_graph_interfaces/srv/get_nodes.hpp"
+#include "pluginlib/class_loader.hpp"
+#include "pluginlib/class_list_macros.hpp"
 
 
 namespace knowledge_graph

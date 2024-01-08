@@ -1,0 +1,5 @@
+<library path="pddl_graph">
+  <class type="knowledge_graph::PddlParser" base_class_type="knowledge_graph::KnowledgeGraphBase">
+    <description>test</description>
+  </class>
+</library>
