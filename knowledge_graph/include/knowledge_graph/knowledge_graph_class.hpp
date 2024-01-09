@@ -1,5 +1,7 @@
 #ifndef KNOWLEDGE_GRAPH__KNOWLEDGE_GRAPH_CLASS_HPP_
 #define KNOWLEDGE_GRAPH__KNOWLEDGE_GRAPH_CLASS_HPP_
+#include <fstream>
+
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -26,8 +28,9 @@ public:
   virtual ~KnowledgeGraphBase() {}
 
 protected:
-
+  std::ifstream in_file;
   KnowledgeGraphBase(/* args */);
+
 
 
 };

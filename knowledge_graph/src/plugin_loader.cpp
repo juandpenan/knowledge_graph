@@ -11,9 +11,13 @@ int main(int argc, char** argv)
 
   try
   {
-    std::shared_ptr<knowledge_graph::KnowledgeGraphBase> pddl_parser = pddl_loader.createSharedInstance("knowledge_graph::PddlParser");
-   
-    printf("The plugin was loaded successfully\n");
+    std::shared_ptr<knowledge_graph::KnowledgeGraphBase> pddl_parser = pddl_loader.createSharedInstance("knowledge_graph::PddlParser");   
+    printf("The pddl plugin was loaded successfully\n");
+
+    std::shared_ptr<knowledge_graph::KnowledgeGraphBase> sg_parser = pddl_loader.createSharedInstance("knowledge_graph::SceneGraphParser");
+     printf("The 3dsg plugin was loaded successfully\n");
+
+    
 
   }
   catch(pluginlib::PluginlibException& ex)

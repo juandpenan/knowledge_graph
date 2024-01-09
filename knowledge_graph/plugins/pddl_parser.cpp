@@ -1,7 +1,8 @@
 #include <memory>
 #include <string>
-#include <sstream>
+
 #include "knowledge_graph/plugins/pddl_parser.hpp"
+#include "plansys2_pddl_parser/Instance.h"
 #include "ament_index_cpp/get_package_share_directory.hpp"
 
 
@@ -18,8 +19,40 @@ PddlParser::~PddlParser()
 }
 bool PddlParser::load_graph(const std::string & path)
 { 
-    std::string domain_pth = ament_index_cpp::get_package_share_directory("knowledge_graph") + "/pddl/domain.pddl"; 
-    return false;
+    // todo(juandpenan) make the path a param
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_pddl_parser");
+  std::string domain_file = pkgpath + "/pddl/domain.pddl";
+
+
+  std::ifstream domain_ifs(domain_file);
+ 
+  std::string domain_str((
+      std::istreambuf_iterator<char>(domain_ifs)),
+                         std::istreambuf_iterator<char>());
+  
+ 
+
+
+ 
+  bool okparse = false;
+  bool okprint = false;
+  try {
+    parser::pddl::Domain domain( domain_str );
+    
+    okparse = true;
+    try {
+      std::cout << domain << std::endl;
+   
+      okprint = true;
+    } catch (std::runtime_error e) {
+      std::cout << "Error printing domain" << e.what() <<std::endl;
+    }
+  } catch (std::runtime_error e) {
+     std::cout << "Error printing domain" << e.what() <<std::endl;
+  }
+  if (!okprint) { std::cout << "Error parsing domain" << std::endl; return false; }
+
+    return true;
 } 
 bool PddlParser::save_graph(const std::string & path, const bool & graph) {
 

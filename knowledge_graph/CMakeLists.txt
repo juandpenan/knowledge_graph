@@ -16,6 +16,7 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(plansys2_pddl_parser REQUIRED)
+find_package(arch_utils REQUIRED)
 
 set(dependencies
     rclcpp
@@ -27,21 +28,24 @@ set(dependencies
     rclcpp_components
     pluginlib
     plansys2_pddl_parser
+    arch_utils
 )
 include_directories(include)
 
 # plugins
-add_library(pddl_graph SHARED
+add_library(parsers SHARED
   plugins/pddl_parser.cpp
+  plugins/npy_3dsg_parser.cpp
 )
-target_include_directories(pddl_graph PUBLIC
+target_include_directories(parsers PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-ament_target_dependencies(pddl_graph
+ament_target_dependencies(parsers
   ${dependencies}
 )
-target_link_libraries(pddl_graph ${PROJECT_NAME})
+target_link_libraries(parsers ${PROJECT_NAME})
+
 
 pluginlib_export_plugin_description_file(knowledge_graph plugins.xml)
 
@@ -57,7 +61,7 @@ target_link_libraries(graph_server ${PROJECT_NAME})
 
 add_executable(graph_plugin src/plugin_loader.cpp)
 ament_target_dependencies(graph_plugin ${dependencies})
-target_link_libraries(graph_plugin pddl_graph ${PROJECT_NAME})
+target_link_libraries(graph_plugin parsers ${PROJECT_NAME})
 
 
 rclcpp_components_register_nodes(${PROJECT_NAME}
@@ -68,7 +72,7 @@ install(TARGETS
   ${PROJECT_NAME}
   graph_server
   graph_plugin
-  pddl_graph
+  parsers
 
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -82,6 +86,11 @@ install(DIRECTORY include/
 install(FILES plugins.xml
   DESTINATION share/${PROJECT_NAME}
 )
+install(DIRECTORY pddl
+ DESTINATION share/${PROJECT_NAME})
+
+ install(DIRECTORY 3dsg
+ DESTINATION share/${PROJECT_NAME})
 
 install(DIRECTORY plugins/
   DESTINATION share/${PROJECT_NAME}/plugins/
@@ -89,7 +98,8 @@ install(DIRECTORY plugins/
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME}
-  pddl_graph
+  parsers
+  # 3dsg_graph
 )
 ament_export_dependencies(${dependencies})
 
