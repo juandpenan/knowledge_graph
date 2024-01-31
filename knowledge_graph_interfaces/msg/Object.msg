@@ -1,0 +1,9 @@
+string[] action_affordance
+string object_class
+int32 id
+geometry_msgs/Point location
+string material
+int32 parent_room
+float64[3] size
+string tactile_texture
+string visual_texture

@@ -14,12 +14,17 @@ set(msg_files
     msg/Content.msg
     msg/Edge.msg
     msg/Node.msg
+    msg/Building.msg
+    msg/Room.msg
+    msg/Object.msg
+    msg/SceneGraph.msg
   )
 set(srv_files
   srv/AddEdge.srv
   srv/AddNode.srv
   srv/GetNodes.srv
   srv/GetEdges.srv
+  srv/UpdateGraph.srv
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

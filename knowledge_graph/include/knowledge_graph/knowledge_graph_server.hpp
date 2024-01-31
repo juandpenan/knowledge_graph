@@ -12,10 +12,13 @@
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "knowledge_graph/knowledge_graph.hpp"
+#include "knowledge_graph/knowledge_graph_class.hpp"
+#include "knowledge_graph_interfaces/msg/scene_graph.hpp"
 #include "knowledge_graph_interfaces/srv/add_edge.hpp"
 #include "knowledge_graph_interfaces/srv/add_node.hpp"
 #include "knowledge_graph_interfaces/srv/get_edges.hpp"
 #include "knowledge_graph_interfaces/srv/get_nodes.hpp"
+#include "knowledge_graph_interfaces/srv/update_graph.hpp"
 #include "pluginlib/class_loader.hpp"
 #include "pluginlib/class_list_macros.hpp"
 
@@ -47,35 +50,30 @@ public:
   on_shutdown(const rclcpp_lifecycle::State & state) override;
 
 private:
-  rclcpp_lifecycle::LifecyclePublisher<knowledge_graph_interfaces::msg::Graph>::SharedPtr graph_pub_;
+  rclcpp_lifecycle::LifecyclePublisher<knowledge_graph_interfaces::msg::SceneGraph>::SharedPtr graph_pub_;
 
-  rclcpp::Service<knowledge_graph_interfaces::srv::GetEdges>::SharedPtr get_edges_service_;
-  rclcpp::Service<knowledge_graph_interfaces::srv::GetNodes>::SharedPtr get_nodes_service_;
-  rclcpp::Service<knowledge_graph_interfaces::srv::AddEdge>::SharedPtr add_edge_service_;
-  rclcpp::Service<knowledge_graph_interfaces::srv::AddNode>::SharedPtr add_node_service_;
-
-  knowledge_graph_interfaces::msg::Graph graph_;
-
-  void GetNodesCallback(
-    const std::shared_ptr<knowledge_graph_interfaces::srv::GetNodes::Request> request,
-    std::shared_ptr<knowledge_graph_interfaces::srv::GetNodes::Response> response);
-
-  void GetEdgesCallback(
-    const std::shared_ptr<knowledge_graph_interfaces::srv::GetEdges::Request> request,
-    std::shared_ptr<knowledge_graph_interfaces::srv::GetEdges::Response> response);
-
-  void AddNodeCallback(
-    const std::shared_ptr<knowledge_graph_interfaces::srv::AddNode::Request> request,
-    std::shared_ptr<knowledge_graph_interfaces::srv::AddNode::Response> response);
-
-  void AddEdgeCallback(
-    const std::shared_ptr<knowledge_graph_interfaces::srv::AddEdge::Request> request,
-    std::shared_ptr<knowledge_graph_interfaces::srv::AddEdge::Response> response);
+  // rclcpp::Service<knowledge_graph_interfaces::srv::GetEdges>::SharedPtr get_edges_service_;
+  // rclcpp::Service<knowledge_graph_interfaces::srv::GetNodes>::SharedPtr get_nodes_service_;
+  // rclcpp::Service<knowledge_graph_interfaces::srv::AddEdge>::SharedPtr add_edge_service_;
+  // rclcpp::Service<knowledge_graph_interfaces::srv::AddNode>::SharedPtr add_node_service_;
+  rclcpp::Service<knowledge_graph_interfaces::srv::UpdateGraph>::SharedPtr update_graph_service_;
+  knowledge_graph_interfaces::msg::SceneGraph graph_;
+  pluginlib::ClassLoader<knowledge_graph::KnowledgeGraphBase> plugin_loader_{"knowledge_graph", "knowledge_graph::KnowledgeGraphBase"};
+  
+  std::string filename_;
+  std::string frame_id_;
+  std::string plugin_;
+  std::shared_ptr<knowledge_graph::KnowledgeGraphBase> parser_;
+  void UpdateGraphCallback(
+    const std::shared_ptr<knowledge_graph_interfaces::srv::UpdateGraph::Request> request,
+    std::shared_ptr<knowledge_graph_interfaces::srv::UpdateGraph::Response> response);
 
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+
+  std_msgs::msg::Header header_;
 };
 } // namespace knowledge_graph
 

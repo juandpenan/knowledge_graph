@@ -17,7 +17,7 @@ PddlParser::PddlParser(/* args */)
 PddlParser::~PddlParser()
 {
 }
-bool PddlParser::load_graph(const std::string & path)
+knowledge_graph_interfaces::msg::SceneGraph PddlParser::load_graph(const std::string & path)
 { 
     // todo(juandpenan) make the path a param
   std::string pkgpath = ament_index_cpp::get_package_share_directory("plansys2_pddl_parser");
@@ -50,9 +50,9 @@ bool PddlParser::load_graph(const std::string & path)
   } catch (std::runtime_error e) {
      std::cout << "Error printing domain" << e.what() <<std::endl;
   }
-  if (!okprint) { std::cout << "Error parsing domain" << std::endl; return false; }
+  if (!okprint) { std::cout << "Error parsing domain" << std::endl; return knowledge_graph_interfaces::msg::SceneGraph(); }
 
-    return true;
+    return knowledge_graph_interfaces::msg::SceneGraph();
 } 
 bool PddlParser::save_graph(const std::string & path, const bool & graph) {
 

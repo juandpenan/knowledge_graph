@@ -1,0 +1,5 @@
+knowledge_graph_server:
+  ros__parameters:
+    frame_id: "map"
+    plugin: "knowledge_graph::SceneGraphParser"
+    file_name: "3DSceneGraph_Adairsville.npz"

@@ -15,6 +15,7 @@ int main(int argc, char** argv)
     printf("The pddl plugin was loaded successfully\n");
 
     std::shared_ptr<knowledge_graph::KnowledgeGraphBase> sg_parser = pddl_loader.createSharedInstance("knowledge_graph::SceneGraphParser");
+    sg_parser->load_graph("test");
      printf("The 3dsg plugin was loaded successfully\n");
 
     

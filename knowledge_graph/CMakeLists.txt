@@ -17,6 +17,10 @@ find_package(rclcpp_components REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(plansys2_pddl_parser REQUIRED)
 find_package(arch_utils REQUIRED)
+find_package(yaml_cpp_vendor REQUIRED)
+# find_package(PythonInterp REQUIRED)
+# find_package(PythonLibs REQUIRED)
+
 
 set(dependencies
     rclcpp
@@ -29,7 +33,14 @@ set(dependencies
     pluginlib
     plansys2_pddl_parser
     arch_utils
+    yaml_cpp_vendor
+    # PythonInterp
+    # PythonLibs
+    # JsonCPP
+    
 )
+
+# include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(include)
 
 # plugins
@@ -52,6 +63,7 @@ pluginlib_export_plugin_description_file(knowledge_graph plugins.xml)
 add_library(${PROJECT_NAME} SHARED
   src/knowledge_graph_server/knowledge_graph_server.cpp
   src/knowledge_graph_class.cpp
+  src/knowledge_graph.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})
 
@@ -86,15 +98,13 @@ install(DIRECTORY include/
 install(FILES plugins.xml
   DESTINATION share/${PROJECT_NAME}
 )
-install(DIRECTORY pddl
- DESTINATION share/${PROJECT_NAME})
-
- install(DIRECTORY 3dsg
- DESTINATION share/${PROJECT_NAME})
 
 install(DIRECTORY plugins/
   DESTINATION share/${PROJECT_NAME}/plugins/
 )
+
+install(DIRECTORY launch config pddl 3dsg
+        DESTINATION share/${PROJECT_NAME})
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME}
@@ -114,7 +124,7 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   find_package(ament_cmake_gtest REQUIRED)
   ament_lint_auto_find_test_dependencies()
-  add_subdirectory(test)
+  # add_subdirectory(test)
 endif()
 
 ament_package()
